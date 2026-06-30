@@ -16,7 +16,7 @@ import { Login } from "./Login";
 import Dashboard from "./admin/Dashboard";
 import { useEffect, useState } from "react";
 // Change this line in your App.js
-const API_URL = "https://your-backend-service.onrender.com/api/vehicles/";
+const API_URL = "http://127.0.0.1:8000/api/vehicles/";
 
 // Wrapper component to safely check the current path using standard React Router hooks
 function AppContent({ user, handleLoginSuccess, handleLogout }) {
