@@ -91,7 +91,7 @@ export default function RentVehicle({ user }) {
   // Fetch live bookings list from backend to know which cars are rented out
   const fetchBookingsList = async () => {
     try {
-      const response = await fetch("https://vehicle-rental-984e.onrender.com/api/booking/");
+      const response = await fetch("http://127.0.0.1:8000/api/booking/");
       if (response.ok) {
         const data = await response.json();
         setBookings(Array.isArray(data) ? data : (data.results || []));
@@ -304,7 +304,7 @@ export default function RentVehicle({ user }) {
     if (!code) return;
 
     try {
-      const res = await fetch(`https://vehicle-rental-984e.onrender.com/api/booking/promos/validate/?code=${encodeURIComponent(code)}`);
+      const res = await fetch(`http://127.0.0.1:8000/api/booking/promos/validate/?code=${encodeURIComponent(code)}`);
       if (res.ok) {
         const data = await res.json();
         if (data.valid) {
@@ -384,7 +384,7 @@ export default function RentVehicle({ user }) {
     };
 
     try {
-      const response = await fetch("https://vehicle-rental-984e.onrender.com/api/booking/", {
+      const response = await fetch("http://127.0.0.1:8000/api/booking/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
