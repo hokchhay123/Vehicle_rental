@@ -90,16 +90,16 @@ export default function RentVehicle({ user }) {
 
   // Fetch live bookings list from backend to know which cars are rented out
   const fetchBookingsList = async () => {
-  try {
-    const response = await fetch("https://vehicle-rental-984e.onrender.com/api/booking/");
-    if (response.ok) {
-      const data = await response.json();
-      setBookings(Array.isArray(data) ? data : (data.results || []));
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/booking/");
+      if (response.ok) {
+        const data = await response.json();
+        setBookings(Array.isArray(data) ? data : (data.results || []));
+      }
+    } catch (err) {
+      console.error("Error fetching booking registry updates:", err);
     }
-  } catch (err) {
-    console.error("Error fetching booking registry updates:", err);
-  }
-};
+  };
 
   useEffect(() => {
     fetchBookingsList();
@@ -299,33 +299,61 @@ export default function RentVehicle({ user }) {
   };
 
   const handleApplyPromo = async (e) => {
-  e.preventDefault();
-  const code = promoInput.trim().toUpperCase();
-  if (!code) return;
+    e.preventDefault();
+    const code = promoInput.trim().toUpperCase();
+    if (!code) return;
 
-  try {
-    const res = await fetch(`https://vehicle-rental-984e.onrender.com/api/booking/promos/validate/?code=${encodeURIComponent(code)}`);
-    // ... rest of the logic remains the same
-  } catch (err) {
-    console.error("Error validating promo code:", err);
-    setPromoError("Could not connect to backend server.");
-  }
-};
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/booking/promos/validate/?code=${encodeURIComponent(code)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.valid) {
+          const check = validatePromoCode(
+            code,
+            selectedVehicle,
+            pickupDate,
+            dropoffDate,
+          );
+          if (!check.valid) {
+            setPromoError(check.error);
+            setActivePromo(null);
+            return;
+          }
+
+          setActivePromo({
+            code: code,
+            discount: data.discount_percent / 100,
+          });
+          setPromoError("");
+        } else {
+          setPromoError(data.error || "Invalid promotional coupon code.");
+          setActivePromo(null);
+        }
+      } else {
+        setPromoError("Failed to validate promo code with server.");
+        setActivePromo(null);
+      }
+    } catch (err) {
+      console.error("Error validating promo code:", err);
+      setPromoError("Could not connect to backend server to validate promo.");
+      setActivePromo(null);
+    }
+  };
 
   const handleConfirmBooking = async (e) => {
-  e.preventDefault();
-  // ... (previous validation logic)
-  try {
-    const response = await fetch("https://vehicle-rental-984e.onrender.com/api/booking/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bookingPayload),
-    });
-    // ... rest of the logic remains the same
-  } catch (err) {
-    alert("Could not connect to backend server. Verify your configuration settings.");
-  }
-};
+    e.preventDefault();
+
+    const activeUserEmail = getLoggedInUserEmail();
+    if (!activeUserEmail) {
+      alert("Please log in to your account first before renting a vehicle.");
+      navigate("/login");
+      return;
+    }
+
+    if (!pickupDate || !dropoffDate) {
+      alert("Please select both your pick-up and drop-off dates.");
+      return;
+    }
 
     const formattedPickupTime = `${pickupHour}:${pickupMin} ${pickupAmPm}`;
     const formattedDropoffTime = `${dropoffHour}:${dropoffMin} ${dropoffAmPm}`;
