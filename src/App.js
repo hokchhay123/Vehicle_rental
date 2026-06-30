@@ -15,8 +15,8 @@ import Term from "./Term";
 import { Login } from "./Login";
 import Dashboard from "./admin/Dashboard";
 import { useEffect, useState } from "react";
-// Change this line in your App.js
-const API_URL = "http://127.0.0.1:8000/api/vehicles/";
+// Update this line in your App.js file:
+const API_URL = "https://vehicle-rental-984e.onrender.com/api/vehicles/";
 
 // Wrapper component to safely check the current path using standard React Router hooks
 function AppContent({ user, handleLoginSuccess, handleLogout }) {
