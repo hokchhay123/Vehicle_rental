@@ -1,4 +1,4 @@
-const API_URL = "https://vehicle-rental-984e.onrender.com/api/vehicles/";
+const API_URL = "http://127.0.0.1:8000/api/vehicles/";
 const vehiclesData = [
   {
     id: 1,
